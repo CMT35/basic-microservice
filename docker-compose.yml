@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  client:
+    build: ./client
+    image: kubecmt/yolo_client:1.0
+    container_name: clientcontainer
+    ports:
+      - '8000:8000'
+    networks:
+      - yolonetwork
+  
+  backend:
+    build: ./backend
+    image: kubecmt/yolo_backend:1.0
+    container_name: backendcontainer
+    ports:
+      - '3000:3000'
+    networks:
+      - yolonetwork
+
+  mongo:
+    image: mongo
+    container_name: mongodb
+    ports:
+      - '27017:27017'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin35
+      MONGO_INITDB_ROOT_PASSWORD: password35
+    volumes:
+      - mydatabase:/data/db
+
+volumes:
+  mydatabase:    
+
+    
+
+
+
+
+    
+
+  
+
