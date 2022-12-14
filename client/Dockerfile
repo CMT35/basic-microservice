@@ -13,8 +13,8 @@ RUN npm install
 # copy rest of the app to the working directory
 COPY . .
 
-# expose port 8000
-EXPOSE 8000
+# expose port 3000
+EXPOSE 3000
 
 # Define entry point
 CMD [ "npm", "start" ]

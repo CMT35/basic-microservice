@@ -7,18 +7,18 @@ services:
     container_name: clientcontainer
     tty: true
     ports:
-      - '8000:8000'
+      - '3000:3000'
     networks:
       - yolonetwork
     depends_on:
-      - mongo
+      - backend
   
   backend:
     build: ./backend
     image: kubecmt/yolo_backend:1.0
     container_name: backendcontainer
     ports:
-      - '3000:3000'
+      - '5000:5000'
     networks:
       - yolonetwork
     depends_on:
@@ -26,19 +26,19 @@ services:
 
   mongo:
     image: mongo
-    container_name: mongodb
+    container_name: mongo
     ports:
       - '27017:27017'
     environment:
-      MONGO_INITDB_ROOT_USERNAME: admin35
-      MONGO_INITDB_ROOT_PASSWORD: password35
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
     volumes:
-      - mydatabase:/data/db
+      - yolomy:/data/db
     networks:
       - yolonetwork
 
 volumes:
-  mydatabase:    
+  yolomy:    
 
 networks:
   yolonetwork:
