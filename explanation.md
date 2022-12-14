@@ -46,3 +46,5 @@ tagged my image according to semver conventions
 # 7.Successful running of the applications and if not, debugging measures applied.
 failed to connect to mongo server successfully
 tried to reconfigure the server.js file with the correct credentials, yet to succeed
+
+# 8. Successfully pushed to all images to dockerhub
