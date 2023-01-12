@@ -1,0 +1,81 @@
+---
+- name: Yolo_App Application Deployment
+  hosts: all
+  remote_user: ansible
+  become: true
+  vars:
+    client_image: "kubecmt/yolo_client:1.0"
+    api_image: "kubecmt/yolo_backend:1.0"
+    mongodb_image: "mongo"
+    app_path: /opt/yoloapp
+    git_repo: https://github.com/CMT35/basic-microservice.git
+  roles:
+  - role: git
+    tasks:
+    - name: Clone code from GitHub
+      git:
+        repo: "{{ git_repo }}"
+        dest: "{{ app_path }}"
+  - role: setup
+    tasks:
+    - name: Install Vagrant
+      apt:
+        name: vagrant
+        state: present
+  - role: docker
+    tasks:
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+  - role: client
+    tasks:
+    - name: Pull client server image
+      docker_image:
+        name: "{{ client_image }}"
+        state: present
+    - name: Run client server container
+      docker_container:
+        name: clientcontainer
+        image: "{{ client_image }}"
+        volumes:
+          - "{{ app_path }}/client-server: /opt/yoloapp"
+        links:
+          - mongo:mongo
+        command: sh -c "cd /opt/yoloapp && npm install && npm start"
+        state: started
+  - role: api
+    tasks:
+    - name: Pull api server image
+      docker_image:
+        name: "{{ api_image }}"
+        state: present
+    - name: Run api server container
+      docker_container:
+        name: backendcontainer
+        image: "{{ api_image }}"
+        volumes:
+          - "{{ app_path }}/api-server:/opt/yoloapp"
+        links:
+          - mongo:mongo
+        command: sh -c "cd /opt/yoloapp && npm install && npm start"
+        state: started
+  - role: mongodb
+    tasks:
+    - name: Pull MongoDB image
+      docker_image:
+        name: "{{ mongodb_image }}"
+        state: present
+    - name: Run MongoDB container
+      docker_container:
+        name: mongo
+        image: "{{ mongodb_image }}"
+        ports:
+          - "27017:27017"
+        volumes:
+          - /opt/mongodata:/data/db
+        state: started
